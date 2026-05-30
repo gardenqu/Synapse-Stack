@@ -5,11 +5,10 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.*;
 
-
+//This entity will stores/holds data about user activity in the app such as creating a deck, flashcard, changed bio,username
 @NoArgsConstructor
 @Getter
 @Setter
-
 @Entity
 @Table(name="user_activities")
 public class UserActivity {
@@ -18,6 +17,7 @@ public class UserActivity {
         this.activityType=activityType;
         this.resource=resource;
     }
+    @Setter(AccessLevel.NONE)
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name="activity_id",length=36)
@@ -35,6 +35,7 @@ public class UserActivity {
     @Column(columnDefinition="TEXT")
     private String metadata;
 
+    @Setter(AccessLevel.NONE)
     @Column(name="performed_at",nullable = false)
     @CreationTimestamp
     private LocalDateTime performedAt;

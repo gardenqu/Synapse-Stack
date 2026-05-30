@@ -10,17 +10,16 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 @NoArgsConstructor
-
+//This entity holds/stores one timed temporary tokens used to reset password and account recovery
 public class AuthActions {
-    public AuthActions(User user,String actionType,String tokenHash,LocalDateTime expiredAt,LocalDateTime createdAt){
+    public AuthActions(User user,String actionType,String tokenHash,LocalDateTime expiresAt){
      this.user=user;
      this.actionType=actionType;
      this.tokenHash=tokenHash;
-     this.expiredAt=expiredAt;
-     this.createdAt=createdAt;
+     this.expiresAt=expiresAt;
 
     }
-
+    @Setter(AccessLevel.NONE)
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(length = 36,name="action_id")
@@ -37,11 +36,12 @@ public class AuthActions {
     private String tokenHash;
 
     @Column(name="expires_at",nullable = false)
-    private LocalDateTime expiredAt;
+    private LocalDateTime expiresAt;
 
     @Column(name="used_at")
     private LocalDateTime usedAt;
 
+    @Setter(AccessLevel.NONE)
     @CreationTimestamp
     @Column(name="created_at",nullable = false,updatable = false)
     private LocalDateTime createdAt;

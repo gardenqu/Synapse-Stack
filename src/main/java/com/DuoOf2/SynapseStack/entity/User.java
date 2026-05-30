@@ -19,6 +19,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(length=36,name="user_id")
+    @Setter(AccessLevel.NONE)
     private String userId;
     @Column(length=20,nullable = false,name="first_name")
     private String firstName;
@@ -31,11 +32,11 @@ public class User {
     @Column(length=50,nullable = false,unique = true)
     private String email;
 
-
+    @Setter(AccessLevel.NONE)
     @CreationTimestamp
     @Column(nullable = false,updatable = false,name="created_at")
     private LocalDateTime createdAt;
-
+    @Setter(AccessLevel.NONE)
     @UpdateTimestamp
     @Column(name="updated_at")
     private LocalDateTime updatedAt;
@@ -51,6 +52,8 @@ public class User {
     List<RefreshToken> refreshTokens= new ArrayList<>();
     @OneToMany(mappedBy = "user")
     List<UserActivity> userActivities= new ArrayList<>();
+    @OneToMany(mappedBy = "user")
+    List<LoginAttempt> loginAttempts= new ArrayList<>();
 
 
 
