@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class SecurityLog {
     public SecurityLog(String eventType,User userId){
         this.eventType=eventType;
-        this.userId=userId;
+        this.user=userId;
     }
     @Setter(AccessLevel.NONE)
     @Id
@@ -28,7 +28,7 @@ public class SecurityLog {
 
     @ManyToOne
     @JoinColumn(name = "user_id",nullable = false)
-    private User userId;
+    private User user;
 
     @Column(name="event_type",length=50,nullable = false)
     private String eventType;
