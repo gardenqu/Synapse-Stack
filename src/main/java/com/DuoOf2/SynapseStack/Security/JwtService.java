@@ -1,6 +1,6 @@
 package com.DuoOf2.SynapseStack.Security;
 
-import com.DuoOf2.SynapseStack.Entity.AppUser;
+import com.DuoOf2.SynapseStack.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -9,8 +9,7 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Service
 public class JwtService {
@@ -25,14 +24,11 @@ public class JwtService {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    public String generateToken(com.DuoOf2.SynapseStack.Entity.AppUser user) {
-        Set<String> roles = user.getRoles().stream()
-                .map(Role::getName)
-                .collect(Collectors.toSet());
-
+    public String generateToken(User user) {
         return Jwts.builder()
-                .subject(user.getId())
-                .claim("roles", roles)
+                .subject(user.getUserId())
+                .claim("email", user.getEmail())
+                .claim("roles", List.of("ROLE_USER")) // TODO: replace with real roles
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSigningKey())
@@ -52,8 +48,6 @@ public class JwtService {
         }
     }
 
-
-
     private Claims extractClaims(String token) {
         return Jwts.parser()
                 .verifyWith(getSigningKey())
@@ -61,5 +55,4 @@ public class JwtService {
                 .parseSignedClaims(token)
                 .getPayload();
     }
-
 }

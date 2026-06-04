@@ -1,5 +1,7 @@
 package com.DuoOf2.SynapseStack.Security;
 
+import com.DuoOf2.SynapseStack.repository.UserRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -24,9 +26,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
-    private final AppUserRepository userRepository;
+    private final UserRepository userRepository;
 
-    public SecurityConfig(JwtFilter jwtFilter, AppUserRepository userRepository) {
+    public SecurityConfig(JwtFilter jwtFilter, UserRepository userRepository) {
         this.jwtFilter = jwtFilter;
         this.userRepository = userRepository;
     }
@@ -55,14 +57,17 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) ->
+                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"))
+                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/puzzles").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/puzzles/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+                .headers(headers -> headers
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

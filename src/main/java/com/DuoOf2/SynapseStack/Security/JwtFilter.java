@@ -1,6 +1,8 @@
 package com.DuoOf2.SynapseStack.Security;
 
-import com.DuoOf2.SynapseStack.Entity.AppUser;
+import com.DuoOf2.SynapseStack.entity.AppUser;
+import com.DuoOf2.SynapseStack.entity.User;
+import com.DuoOf2.SynapseStack.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,18 +11,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@Component
 public class JwtFilter extends OncePerRequestFilter {
 
     private static final Logger log = LoggerFactory.getLogger(JwtFilter.class);
 
     private final JwtService jwtService;
-    private final AppUserRepository userRepository;
+    private final UserRepository userRepository;
 
-    public JwtFilter(JwtService jwtService, AppUserRepository userRepository) {
+    public JwtFilter(JwtService jwtService, UserRepository userRepository) {
         this.jwtService = jwtService;
         this.userRepository = userRepository;
     }
@@ -51,7 +55,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
             if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 if (jwtService.isTokenValid(token)) {
-                    AppUser user = userRepository.findById(userId).orElse(null);
+                    User user = userRepository.findById(userId).orElse(null);
 
                     if (user != null) {
                         UsernamePasswordAuthenticationToken authToken =
