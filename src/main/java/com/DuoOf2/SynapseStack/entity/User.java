@@ -2,6 +2,11 @@ package com.DuoOf2.SynapseStack.entity;
 import  jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.*;
+import org.jspecify.annotations.Nullable;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import java.time.*;
 import java.util.*;
 @Entity
@@ -9,7 +14,7 @@ import java.util.*;
 @Getter
 @Setter
 @NoArgsConstructor
-public class User {
+public class User implements UserDetails {
     public User(String firstName,String lastName,String email,String passwordHash){
         this.firstName=firstName;
         this.lastName=lastName;
@@ -56,5 +61,21 @@ public class User {
     List<LoginAttempt> loginAttempts= new ArrayList<>();
 
 
+    // ── UserDetails implementation ──────────────────────────
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // No roles entity yet — defaulting to USER role
+        // TODO: replace with real roles once Role entity is ready
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+    }
 
+    @Override
+    public String getPassword() {
+        return passwordHash;
+    }
+
+    @Override
+    public String getUsername() {
+        return email; // Spring Security uses this to identify the user
+    }
 }
